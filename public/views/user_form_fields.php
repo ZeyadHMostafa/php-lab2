@@ -3,14 +3,14 @@
   value="<?php echo htmlspecialchars($user_data['name'] ?? ''); ?>"
   required
   >
-  
-<input
-  type="email" name="email" placeholder="Email"
-  value="<?php echo htmlspecialchars($user_data['email'] ?? ''); ?>"
-  required
-  >
 
+  
 <?php if (!isset($is_edit) || !$is_edit): ?>
+  <input
+    type="email" name="email" placeholder="Email"
+    value="<?php echo htmlspecialchars($user_data['email'] ?? ''); ?>"
+    required
+    >
   <input type="password" name="password" placeholder="Password" required>
   <input type="password" name="confirm_password" placeholder="Confirm Password" required>
 <?php endif; ?>
