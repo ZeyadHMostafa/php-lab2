@@ -15,4 +15,4 @@ if (!$user) {
   exit;
 }
 
-include __DIR__ . '/views/welcome_view.php';
+include __DIR__ . '/views/profile_view.php';

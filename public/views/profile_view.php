@@ -32,6 +32,7 @@
 
     <hr>
     <div class="button-group">
+      <a href="users.php" class="btn-list btn-link">users</a>
       <a href="logout.php" class="btn-reset btn-link">Logout</a>
     </div>
   </div>

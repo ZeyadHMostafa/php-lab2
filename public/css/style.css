@@ -115,13 +115,76 @@ hr {
 .btn-link {
   text-decoration: none;
   text-align: center;
-  padding-left: 5px;
-  padding-right: 5px;
+  color: white;
+  padding-left: 8px;
+  padding-right: 8px;
   border-radius: 8px;
   line-height: 2.5;
   display: block;
 }
 
+.btn-list {
+  background: #3b8dd5;
+}
+
 .btn-reset:hover {
   background: #5a6268;
+}
+
+.list-card {
+  width: auto;
+  min-width: 800px;
+  max-width: 95%;
+  margin: 20px;
+}
+
+.list-avatar {
+  width: 45px !important;
+  height: 45px !important;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid #ddd;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto;
+}
+
+td, th {
+  padding: 12px;
+  text-align: left;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-edit {
+  background: #ffc107;
+  color: #000;
+  text-decoration: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 0.8em;
+}
+
+.btn-delete {
+  background: #a11b2f;
+  color: white;
+  text-decoration: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 0.8em;
+}
+
+.btn-add {
+  background: #28a77b;
+  color: white;
+  text-decoration: none;
+  padding: 8px 15px;
+  border-radius: 4px;
+  float: right;
 }
