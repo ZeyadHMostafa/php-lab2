@@ -1,82 +1,88 @@
 <?php
-require_once __DIR__ . '/../config.php';
-define('UPLOAD_DIR', __DIR__ . '/../public/uploads/');
+require_once __DIR__ . '/database.php';
+
+class UserManager extends Database {
+  private const UPLOAD_DIR = __DIR__ . '/../public/uploads/';
+
+  public function findById($id) {
+    $result = $this->select('users', ['id' => $id]);
+    return $result[0] ?? null;
+  }
+
+  public function findByEmail($email) {
+    $result = $this->select('users', ['email' => $email]);
+    return $result[0] ?? null;
+  }
+
+  public function getAll() {
+    return $this->select('users', [], 'created_at DESC');
+  }
+
+  public function deleteUser($id) {
+    return $this->delete('users', $id);
+  }
+
+  public function uploadProfilePic($file) {
+    if (!isset($file['tmp_name']) || empty($file['tmp_name'])) {
+      return null;
+    }
+
+    $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+    $filename = bin2hex(random_bytes(8)) . "." . $ext;
+    $target = self::UPLOAD_DIR . $filename;
+
+    return move_uploaded_file($file['tmp_name'], $target) ? $filename : null;
+  }
+
+  public function save($userData) {
+    $id = $userData['id'] ?? null;
+    unset($userData['id']);
+
+    if ($id) {
+      return $this->update('users', $userData, $id);
+    } else {
+      return $this->insert('users', $userData);
+    }
+  }
+}
+
+
+// TODO: I'll remove these after making sure everything is in place
+
+
+$globalConnection = new UserManager();
 
 function get_db_connection() {
-  $config = require __DIR__ . '/../config.php';
-  $dsn = "mysql:host={$config['db_host']};dbname={$config['db_name']}";
-  $options = [
-    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-    PDO::ATTR_EMULATE_PREPARES   => false,
-  ];
-
-  try {
-    return new PDO($dsn, $config['db_user'], $config['db_pass'], $options);
-  } catch (PDOException $e) {
-    die("Database connection failed: " . $e->getMessage());
-  }
+  global $globalConnection;
+  return $globalConnection;
 }
 
 function find_user_by_id($id) {
-  $pdo = get_db_connection();
-  $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
-  $stmt->execute([$id]);
-  return $stmt->fetch() ?: null;
+  global $globalConnection;
+  return $globalConnection->findById($id);
 }
 
 function delete_user($id) {
-  $pdo = get_db_connection();
-  $stmt = $pdo->prepare("DELETE FROM users WHERE id = ?");
-  return $stmt->execute([$id]);
+  global $globalConnection;
+  return $globalConnection->deleteUser($id);
 }
 
 function get_all_users() {
-  $pdo = get_db_connection();
-  $stmt = $pdo->query("SELECT * FROM users ORDER BY created_at DESC");
-  return $stmt->fetchAll();
+  global $globalConnection;
+  return $globalConnection->getAll();
 }
 
 function upload_profile_pic($file) {
-  if (!isset($file['tmp_name']) || empty($file['tmp_name'])) {
-    return null;
-  }
-
-  $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
-  $filename = bin2hex(random_bytes(8)) . "." . $ext;
-  $target = UPLOAD_DIR . $filename;
-
-  return move_uploaded_file($file['tmp_name'], $target) ? $filename : null;
+  global $globalConnection;
+  return $globalConnection->uploadProfilePic($file);
 }
 
 function save_user_data($userData) {
-  $pdo = get_db_connection();
-  
-  if (isset($userData['id']) && !empty($userData['id'])) {
-    $sql = "UPDATE users SET name = :name, email = :email, room = :room, ext = :ext, pic = :pic WHERE id = :id";
-    $stmt = $pdo->prepare($sql);
-  } else {
-    $sql = "INSERT INTO users (name, email, password, room, ext, pic) VALUES (:name, :email, :password, :room, :ext, :pic)";
-    $stmt = $pdo->prepare($sql);
-    $stmt->bindValue(':password', $userData['password']);
-  }
-
-  $stmt->bindValue(':name', $userData['name']);
-  $stmt->bindValue(':email', $userData['email']);
-  $stmt->bindValue(':room', $userData['room']);
-  $stmt->bindValue(':ext', $userData['ext']);
-  $stmt->bindValue(':pic', $userData['pic']);
-  
-  if (isset($userData['id'])) {
-    $stmt->bindValue(':id', $userData['id']);
-  }
-
-  return $stmt->execute();
+  global $globalConnection;
+  return $globalConnection->save($userData);
 }
 
 function find_user_by_email($email) {
-  $pdo = get_db_connection();
-  $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?");
-  $stmt->execute([$email]);
-  return $stmt->fetch() ?: null;
+  global $globalConnection;
+  return $globalConnection->findByEmail($email);
 }
