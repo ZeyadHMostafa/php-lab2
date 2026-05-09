@@ -19,7 +19,22 @@ class UserManager extends Database {
   }
 
   public function deleteUser($id) {
-    return $this->delete('users', $id);
+    $user = $this->findById($id);
+    
+    if (!$user) {
+      return false;
+    }
+
+    $dbDeleted = $this->delete('users', $id);
+
+    if ($dbDeleted && !empty($user['pic'])) {
+      $filePath = self::UPLOAD_DIR . $user['pic'];
+      if (file_exists($filePath)) {
+        unlink($filePath);
+      }
+    }
+
+    return $dbDeleted;
   }
 
   public function uploadProfilePic($file) {
