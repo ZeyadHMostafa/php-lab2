@@ -46,43 +46,4 @@ class UserManager extends Database {
   }
 }
 
-
-// TODO: I'll remove these after making sure everything is in place
-
-
-$globalConnection = new UserManager();
-
-function get_db_connection() {
-  global $globalConnection;
-  return $globalConnection;
-}
-
-function find_user_by_id($id) {
-  global $globalConnection;
-  return $globalConnection->findById($id);
-}
-
-function delete_user($id) {
-  global $globalConnection;
-  return $globalConnection->deleteUser($id);
-}
-
-function get_all_users() {
-  global $globalConnection;
-  return $globalConnection->getAll();
-}
-
-function upload_profile_pic($file) {
-  global $globalConnection;
-  return $globalConnection->uploadProfilePic($file);
-}
-
-function save_user_data($userData) {
-  global $globalConnection;
-  return $globalConnection->save($userData);
-}
-
-function find_user_by_email($email) {
-  global $globalConnection;
-  return $globalConnection->findByEmail($email);
-}
+$userManager = new UserManager();

@@ -9,10 +9,10 @@ if (!isset($_SESSION['user_email'])) {
 
 if (isset($_GET['delete'])) {
   $id = (int)$_GET['delete'];
-  delete_user($id);
+  $$userManager->deleteUser($id);
   header("Location: users.php");
   exit;
 }
 
-$users = get_all_users();
+$users = $userManager->getAll();
 include __DIR__ . '/views/list_view.php';

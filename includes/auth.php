@@ -2,6 +2,7 @@
 require_once __DIR__ . '/data_store.php';
 
 function register_user($data, $file) {
+  global $userManager;
   $emailPattern = '/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/';
   $email = strtolower(trim($data['email']));
   $password = $data['password'];
@@ -14,7 +15,7 @@ function register_user($data, $file) {
     return "Invalid email format.";
   }
 
-  if (find_user_by_email($email)) {
+  if ($userManager->findByEmail($email)) {
     return "Email already exists.";
   }
 
@@ -26,7 +27,7 @@ function register_user($data, $file) {
     return "Passwords do not match.";
   }
 
-  $filename = upload_profile_pic($file);
+  $filename = $userManager->uploadProfilePic($file);
   if (!$filename) {
     return "Image upload failed.";
   }
@@ -41,12 +42,13 @@ function register_user($data, $file) {
     'joined'   => date('Y-m-d')
   ];
 
-  return save_user_data($newUser) ? true : "Failed to save user data.";
+  return $userManager->save($newUser) ? true : "Failed to save user data.";
 }
 
 function attempt_login($email, $password) {
+  global $userManager;
   $email = strtolower(trim($email));
-  $user = find_user_by_email($email);
+  $user = $userManager->findByEmail($email);
   
   if ($user && password_verify($password, $user['password'])) {
     if (session_status() === PHP_SESSION_NONE) {

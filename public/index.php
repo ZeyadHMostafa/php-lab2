@@ -7,7 +7,7 @@ if (!isset($_SESSION['user_email'])) {
   exit;
 }
 
-$user = find_user_by_email($_SESSION['user_email']);
+$user = $userManager->findByEmail($_SESSION['user_email']);
 
 if (!$user) {
   session_destroy();

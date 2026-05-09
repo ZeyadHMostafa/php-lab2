@@ -16,18 +16,18 @@ if (!$user_id) {
   exit;
 }
 
-$user_data = find_user_by_id($user_id);
+$user_data = $userManager->findById($user_id);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $data = $_POST;
   
   if (!empty($_FILES['profile_pic']['tmp_name'])) {
-    $data['pic'] = upload_profile_pic($_FILES['profile_pic']);
+    $data['pic'] = $userManager->uploadProfilePic($_FILES['profile_pic']);
   } else {
     $data['pic'] = $user_data['pic'];
   }
 
-  if (save_user_data($data)) {
+  if ($userManager->save($data)) {
     header("Location: users.php?updated=1");
     exit;
   } else {
